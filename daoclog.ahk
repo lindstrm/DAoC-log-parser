@@ -100,6 +100,10 @@ parseLog()
 		if TotalGold
 			GoldCount += TotalGold1
 
+		RegExMatch(A_LoopReadLine, "You recieve (\d{1,}) gold,", TotalGold)
+		if TotalGold
+			GoldCount += TotalGold1
+
 		RegExMatch(A_LoopReadLine, "You heal .* for (\d{1,}) hit points.", TotalHeal)
 		if TotalHeal
 			HealCount += TotalHeal1
