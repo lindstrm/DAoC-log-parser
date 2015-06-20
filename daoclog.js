@@ -112,7 +112,6 @@ var daoclog = function() {
 				}.bind(this))
 
 				this.irs(line, function(amount) {
-					console.log(amount)
 					this.stats.irs = amount;
 				}.bind(this))
 
@@ -216,8 +215,8 @@ var daoclog = function() {
 
 	this.irs = function(line, callback) {
 
-		if(line.match(/I Remain Standing\.\.\.":/) !== null)
-			callback(line.match(/"I Remain Standing\.\.\.": (.*)/)[1]);
+		if(line.match(/I Remain Standing\.\.\.": (\d{1,6})/) !== null)
+			callback(line.match(/"I Remain Standing\.\.\.": (\d{1,6})/)[1]);
 	}
 
 	this.rph = function(line, callback) {
