@@ -5,7 +5,7 @@ var storage = $.localStorage;
 var daoclog = function() {
 	this.lines = [];
 	this.stats = {
-		damagedealt: 0, heal:0, deathblows: 0, kills: 0, realmpoints: 0, gold: 0, damagereceived: 0, healrecieved: 0, buffrips: 0, irs: 0, rph: 0
+		damagedealt: 0, heal:0, deathblows: 0, kills: 0, realmpoints: 0, gold: 0, damagereceived: 0, healrecieved: 0, buffrips: 0, irs: '0', rph: 0
 	}
 
 	this._init = function() {
@@ -22,7 +22,7 @@ var daoclog = function() {
 					document.querySelector('.healingdone .value').innerHTML = stats.heal;					
 					document.querySelector('.healingrcvd .value').innerHTML = stats.healrecieved;					
 					document.querySelector('.buffrips .value').innerHTML = stats.buffrips;					
-					document.querySelector('.irs .value').innerHTML = stats.irs;					
+					document.querySelector('.irs span').innerHTML = stats.irs;					
 					document.querySelector('.rph .value').innerHTML = stats.rph;					
 
 				}.bind(this));
@@ -112,6 +112,7 @@ var daoclog = function() {
 				}.bind(this))
 
 				this.irs(line, function(amount) {
+					console.log(amount)
 					this.stats.irs = amount;
 				}.bind(this))
 
@@ -215,8 +216,8 @@ var daoclog = function() {
 
 	this.irs = function(line, callback) {
 
-		if(line.match(/"I Remain Standing...": (0 \(no deaths\))/) !== null)
-			callback(parseInt(line.match(/"I Remain Standing...": (0 \(no deaths\))/)[1]));
+		if(line.match(/I Remain Standing\.\.\.":/) !== null)
+			callback(line.match(/"I Remain Standing\.\.\.": (.*)/)[1]);
 	}
 
 	this.rph = function(line, callback) {
