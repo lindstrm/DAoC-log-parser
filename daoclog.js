@@ -5,27 +5,25 @@ var storage = $.localStorage;
 var daoclog = function() {
 	this.lines = [];
 	this.stats = {
-		damagedealt: 0, heal:0, deathblows: 0, kills: 0, realmpoints: 0, gold: 0, damagereceived: 0, healrecieved: 0, buffrips: 0, irs: '0', rph: 0
+		damagedealt: 0, heal:0, deathblows: 0, kills: 0, realmpoints: 0, gold: 0, damagereceived: 0, healrecieved: 0, healrecievedMaduviex: 0, buffrips: 0, irs: '0', rph: 0
 	}
 
 	this._init = function() {
 		this.timer = setInterval(function(){
-			this._getLog(function(log) {
-				this.parse(function(stats) {
+			this._getLog(function(stats) {
 
-					document.querySelector('.realmpoints .value').innerHTML = stats.realmpoints;
-					document.querySelector('.gold .value').innerHTML = stats.gold;
-					document.querySelector('.dmgdealt .value').innerHTML = stats.damagedealt;
-					document.querySelector('.dmgrcvd .value').innerHTML = stats.damagereceived;
-					document.querySelector('.kills .value').innerHTML = stats.kills;
-					document.querySelector('.deathblows .value').innerHTML = stats.deathblows;
-					document.querySelector('.healingdone .value').innerHTML = stats.heal;					
-					document.querySelector('.healingrcvd .value').innerHTML = stats.healrecieved;					
-					document.querySelector('.buffrips .value').innerHTML = stats.buffrips;					
-					document.querySelector('.irs span').innerHTML = stats.irs;					
-					document.querySelector('.rph .value').innerHTML = stats.rph;					
+				document.querySelector('.realmpoints .value').innerHTML = stats.rpearned;
+				document.querySelector('.gold .value').innerHTML = stats.goldearned;
+				document.querySelector('.dmgdealt .value').innerHTML = stats.dmgdealt;
+				document.querySelector('.dmgrcvd .value').innerHTML = stats.dmgreceived;
+				document.querySelector('.kills .value').innerHTML = stats.killcount;
+				document.querySelector('.deathblows .value').innerHTML = stats.dbcount;
+				document.querySelector('.healingdone .value').innerHTML = stats.healdone;					
+				document.querySelector('.healingrcvd .value').innerHTML = stats.healreceived;					
+				document.querySelector('.buffrips .value').innerHTML = stats.buffrips;					
+				document.querySelector('.irs span').innerHTML = stats.irs;					
+				document.querySelector('.rph .value').innerHTML = stats.rph;					
 
-				}.bind(this));
 			}.bind(this));
 		}.bind(this), 2000)
 		
@@ -33,7 +31,7 @@ var daoclog = function() {
 	};
 
 	this._getLog = function(callback) {
-		$.get('chat.log', function(data) {
+		$.getJSON('stats.json', function(data) {
 			this.log = data;
 			callback(data);
 		}.bind(this), "text")
@@ -73,164 +71,6 @@ var daoclog = function() {
 
 		})
 	}
-
-	this.parse = function(callback) {
-
-		$.each(this.log.split(/\r\n/g), function(i, line) {
-		
-			if( this.lines.indexOf(line) == -1) {
-				this.damage(line, function(amount) {
-					this.stats.damagedealt += amount;
-				}.bind(this))
-
-				this.heal(line, function(amount) {
-					this.stats.heal += amount;
-				}.bind(this))
-
-				this.damagetaken(line, function(amount) {
-					this.stats.damagereceived += amount;
-				}.bind(this))
-
-				this.healrecieved(line, function(amount) {
-					this.stats.healrecieved += amount;
-				}.bind(this))
-
-				this.gold(line, function(amount) {
-					this.stats.gold += amount;
-				}.bind(this))
-
-				this.realmpoints(line, function(amount) {
-					this.stats.realmpoints = amount;
-				}.bind(this))
-
-				this.kills(line, function(amount) {
-					this.stats.kills = amount;
-				}.bind(this))
-
-				this.deathblows(line, function(amount) {
-					this.stats.deathblows = amount;
-				}.bind(this))
-
-				this.irs(line, function(amount) {
-					this.stats.irs = amount;
-				}.bind(this))
-
-				this.rph(line, function(amount) {
-					this.stats.rph = amount;
-				}.bind(this))
-
-				this.buffrips(line, function(amount) {
-					this.stats.buffrips += amount;
-				}.bind(this))
-			
-				this.lines.push(line);
-			}
-
-		}.bind(this));
-
-		callback(this.stats);
-
-	};
-
-	this.damage = function(line, callback) {
-
-		if(line.match(/You hit .* for (\d{1,4}) .*? damage!/) !== null)
-			callback(parseInt(line.match(/You hit .* for (\d{1,4}) .* damage!/)[1]));
-
-		if(line.match(/You attack .* and hit for (\d{1,4}) .*? damage!/) !== null)
-			callback(parseInt(line.match(/You attack .* and hit for (\d{1,4}) .* damage!/)[1]));
-
-		if(line.match(/You hit .* for (\d{1,2}) extra damage!/) !== null)
-			callback(parseInt(line.match(/You hit .* for (\d{1,2}) extra damage!/)[1]));
-
-		if(line.match(/You critical hit for an additional (\d{1,}) damage!/) !== null)
-			callback(parseInt(line.match(/You critical hit for an additional (\d{1,}) damage!/)[1]));
-	}
-
-	this.heal = function(line, callback) {
-
-		if(line.match(/You heal .* for (\d{1,}) hit points./) !== null)
-			callback(parseInt(line.match(/You heal .* for (\d{1,}) hit points./)[1]));
-
-		if(line.match(/You critical heal for an additional (\d{1,}) hit points!/) !== null)
-			callback(parseInt(line.match(/You critical heal for an additional (\d{1,}) hit points!/)[1]));
-	}
-
-	this.healrecieved = function(line, callback) {
-
-		if(line.match(/You are healed by .* for (\d{1,}) hit points./) !== null)
-			callback(parseInt(line.match(/You are healed by .* for (\d{1,}) hit points./)[1]));
-	}
-	
-	this.damagetaken = function(line, callback) {
-
-		if(line.match(/hits you for (\d{1,}) damage./) !== null)
-			callback(parseInt(line.match(/hits you for (\d{1,}) damage./)[1]));
-
-		if(line.match(/hits your .* for (\d{1,}) .* damage./) !== null)
-			callback(parseInt(line.match(/hits your .* for (\d{1,}) .* damage./)[1]));
-
-		if(line.match(/You are hit for (\d{1,}) damage./) !== null)
-			callback(parseInt(line.match(/You are hit for (\d{1,}) damage./)[1]));
-	}
-
-	this.gold = function(line, callback) {
-
-		if(line.match(/Your share of the loot is (\d{1,}) gold,/) !== null)
-			callback(parseInt(line.match(/Your share of the loot is (\d{1,}) gold,/)[1]));
-
-		if(line.match(/You pick up (\d{1,}) gold,/) !== null)
-			callback(parseInt(line.match(/You pick up (\d{1,}) gold,/)[1]));
-
-		if(line.match(/You gain an additional (\d{1,}) gold,/) !== null)
-			callback(parseInt(line.match(/You gain an additional (\d{1,}) gold,/)[1]));
-
-		if(line.match(/You recieve (\d{1,}) gold/) !== null)
-			callback(parseInt(line.match(/You recieve (\d{1,}) gold/)[1]));
-	}
-
-	this.realmpoints = function(line, callback) {
-
-		if(line.match(/Total RP: (\d{1,})/) !== null)
-			callback(parseInt(line.match(/Total RP: (\d{1,})/)[1]));
-	}
-
-	this.kills = function(line, callback) {
-
-		if(line.match(/Kills that have earned RP: (\d{1,})/) !== null)
-			callback(parseInt(line.match(/Kills that have earned RP: (\d{1,})/)[1]));
-	}
-
-	this.deathblows = function(line, callback) {
-
-		if(line.match(/Deathblows: (\d{1,})/) !== null)
-			callback(parseInt(line.match(/Deathblows: (\d{1,})/)[1]));
-	}
-
-	this.deathblows = function(line, callback) {
-
-		if(line.match(/Deathblows: (\d{1,})/) !== null)
-			callback(parseInt(line.match(/Deathblows: (\d{1,})/)[1]));
-	}
-
-	this.irs = function(line, callback) {
-
-		if(line.match(/I Remain Standing\.\.\.": (\d{1,6})/) !== null)
-			callback(line.match(/"I Remain Standing\.\.\.": (\d{1,6})/)[1]);
-	}
-
-	this.rph = function(line, callback) {
-
-		if(line.match(/RP\/hour: (.*)/) !== null)
-			callback(parseInt(line.match(/RP\/hour: (.*)/)[1]));
-	}
-
-	this.buffrips = function(line, callback) {
-
-		if(line.match(/Your spell rips away some of your target's enhancing magic./) !== null)
-			callback(1);
-	}
-
 }
 
 new daoclog()._init();
