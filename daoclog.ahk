@@ -9,7 +9,6 @@ stats       := {}
 #UseHook
 F12::
 WinGetTitle, Title, A
-msgbox, %title%
 Loop
 {
 	
