@@ -11,7 +11,7 @@ F12::
 WinGetTitle, Title, A
 Loop
 {
-	
+
 	If statsbutton
 		controlsend,,%statsbutton%, %title%
 		sleep 500
@@ -104,9 +104,9 @@ Loop
 		if healdone
 			stats.healdone += healdone1
 
-		RegExMatch(A_LoopReadLine, "You are healed by .* for (\d{1,}) hit points.", healreceived)
+		RegExMatch(A_LoopReadLine, ".* healed you for (\d{1,}) hit points.", healreceived)
 		if healreceived
-			stats.healreceived += healreceived
+			stats.healreceived += healreceived1
 
 		RegExMatch(A_LoopReadLine, ".* hits you for (\d{1,}) damage.", dmgreceived)
 		if dmgreceived
@@ -115,8 +115,8 @@ Loop
 		RegExMatch(A_LoopReadLine, ".* hits your .* for (\d{1,}) .* damage.", dmgreceived)
 		if dmgreceived
 			stats.dmgreceived += dmgreceived1
- 
-		RegExMatch(A_LoopReadLine, "You are hit for (\d{1,}) .* damage.", dmgreceived) 
+
+		RegExMatch(A_LoopReadLine, "You are hit for (\d{1,}) .* damage.", dmgreceived)
 		if dmgreceived
 			stats.dmgreceived += dmgreceived1
 
@@ -136,9 +136,9 @@ Loop
 
 	loop
 	{
-		
+
 		FileMove,%log%,%log%
-	
+
 		If Errorlevel
 			break
 		Else
@@ -147,7 +147,7 @@ Loop
 		sleep 500
 
 	}
-	
+
 	sleep 5000
 }
 
@@ -158,7 +158,7 @@ return
 resetLog()
 {
 	global logbutton, log
-	
+
 	if checkLogging() == true
 		send %logbutton%
 
@@ -173,7 +173,7 @@ checkLogging()
 	global log
 
 	FileMove,%log%,%log%
-	
+
 	If Errorlevel
 		return true
 	Else
